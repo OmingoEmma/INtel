@@ -234,3 +234,6 @@ def compute_and_save_shap_artifacts(
 
     return artifacts
 
+# Backwards-compatible alias for other callers
+save_shap_artifacts = compute_and_save_shap_artifacts
+
