@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Kenya inflation update",
+    "country": "Kenya",
+    "sentiment_score": 0.0681818181818181,
+    "gdp": 120.5,
+    "cpi": 7.2,
+    "unemployment": 5.4
+  },
+  {
+    "title": "UK economy",
+    "country": "Uk",
+    "sentiment_score": 0.1666666666666666,
+    "gdp": 2700.0,
+    "cpi": 3.5,
+    "unemployment": 4.1
+  },
+  {
+    "title": "Empty article",
+    "country": null,
+    "sentiment_score": 0.0,
+    "gdp": NaN,
+    "cpi": NaN,
+    "unemployment": NaN
+  }
+]

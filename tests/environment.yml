@@ -1,0 +1,22 @@
+name: riskiintel
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pandas
+  - numpy
+  - scikit-learn
+  - beautifulsoup4
+  - requests
+  - spacy
+  - transformers
+  - pytorch
+  - shap
+  - matplotlib
+  - seaborn
+  - jupyterlab
+  - pip
+  - pip:
+      - newspaper3k
+      - python-dotenv

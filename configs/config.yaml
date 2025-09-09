@@ -1,0 +1,52 @@
+# RiskIntel configuration (production-lean)
+
+postgres:
+  # Prefer DATABASE_URL env var in deployments; this block is the local default.
+  host: 127.0.0.1
+  port: 5432
+  dbname: riskintel
+  user: riskintel_user
+  password: riskintel2025          # Prefer env var: RISKINTEL_DB_PASSWORD (or DATABASE_URL)
+  sslmode: disable       # use require/verify-full for cloud DBs
+
+newsapi:
+  api_key: ""            # Prefer env var: NEWSAPI_API_KEY
+  query: "(loan OR loans OR debt OR default OR economy OR inflation OR IMF OR \"World Bank\")"
+  languages: ["en"]
+  page_size: 50          # 100 can hit rate limits; start with 50
+  max_pages_per_poll: 3
+  lookback_minutes_if_empty: 180
+  poll_interval_minutes: 15
+
+fred:
+  api_key: ""            # Prefer env var: FRED_API_KEY
+  polite_delay_seconds: 0.3
+
+worldbank:
+  base_url: "https://api.worldbank.org/v2"
+  polite_delay_seconds: 0.3
+  countries: ["KEN","GBR","USA","FRA","DEU"]   # track list; extend as needed
+
+ingestion:
+  backfill_months: 18
+  scoring_interval_minutes: 60
+  dedupe_lookback_minutes: 240   # avoid reprocessing near-duplicates
+
+scoring:
+  news_lookback_days: 60
+  sentiment_windows_days: [7, 30]
+  weights:
+    sentiment: 0.4
+    cpi_mom: 0.3
+    unemployment_mom: 0.2
+    news_volume_z: 0.1
+  max_news_z_cap: 3.0
+
+http:
+  timeout_seconds: 30
+  retry_attempts: 3
+  backoff_seconds: 1.5
+
+logging:
+  level: INFO
+  format: "%(asctime)s %(levelname)s %(name)s: %(message)s"

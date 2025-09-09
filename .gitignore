@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+.env
+.venv/
+venv/
+*.env
+
+# Node/JS (if any frontend)
+node_modules/
+dist/
+build/
+
+# OS/editor
+.DS_Store
+*.code-workspace
+
+# Data & artifacts
+data/raw/
+data/interim/
+*.sqlite
+*.db
+*.csv
+*.parquet
+reports/*.html
+models/
+checkpoints/
+
+# Jupyter
+.ipynb_checkpoints/

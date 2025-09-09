@@ -1,0 +1,73 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "829e7d81",
+   "metadata": {},
+   "source": [
+    "# Day 6: Dashboard Mockup – RiskIntel\n",
+    "\n",
+    "This notebook summarizes the explainability analysis using SHAP and the Streamlit dashboard prototype for interactive risk score visualization."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a50599d5",
+   "metadata": {},
+   "source": [
+    "## SHAP Explainability\n",
+    "\n",
+    "To make the model's predictions interpretable, we applied SHAP (SHapley Additive exPlanations) on the trained Random Forest model. The following plot summarizes the most impactful features:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6c6ad76d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from IPython.display import Image\n",
+    "Image(filename='../../reports/figures/shap_summary.png')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b90aa9b4",
+   "metadata": {},
+   "source": [
+    "The SHAP values for each individual feature were also exported to `examples/shap_explanations.json` for future use."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4c694430",
+   "metadata": {},
+   "source": [
+    "## Streamlit Dashboard Prototype\n",
+    "\n",
+    "We developed an interactive dashboard using Streamlit to:\n",
+    "- Display sample predicted risk scores.\n",
+    "- Show SHAP feature importance visually.\n",
+    "- Allow filtering of news articles by country.\n",
+    "\n",
+    "The prototype was run using:\n",
+    "```bash\n",
+    "streamlit run src/dashboard/streamlit_app.py\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "edcaad68",
+   "metadata": {},
+   "source": [
+    "### Screenshots of the Dashboard (saved separately)\n",
+    "Please refer to the screenshots saved in the reports or manually captured in the dissertation appendix."
+   ]
+  }
+ ],
+ "metadata": {},
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
