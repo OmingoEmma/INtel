@@ -1,0 +1,7 @@
+{
+  "summary_png": "reports/figures/shap_summary_20250909_014728.png",
+  "bar_png": "reports/figures/shap_feature_importance_20250909_014728.png",
+  "summary_html": "reports/shap_force_summary_20250909_014728.html",
+  "local_html": "reports/shap_force_local_20250909_014728.html",
+  "values_json": "reports/shap_values_20250909_014728.json"
+}

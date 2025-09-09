@@ -1,18 +1,54 @@
-# src/modeling/train_model.py
+"""Training script for the financial risk model with SHAP explainability.
+
+This module trains a RandomForestRegressor on engineered features, persists the
+trained model and predictions, and generates SHAP explainability artifacts for
+both global and local model behavior analysis.
+"""
 
 import pandas as pd
 import numpy as np
 import os
-import json
+import logging
+from typing import Dict
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, r2_score
 import joblib
 
-def load_data(path="data/processed/merged_features.csv"):
+from src.explainability.shap_explainer import compute_and_save_shap_artifacts
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def load_data(path: str = "data/processed/merged_features.csv") -> pd.DataFrame:
+    """Load processed features from CSV.
+
+    Parameters
+    ----------
+    path: str
+        Path to the processed features CSV file.
+
+    Returns
+    -------
+    pd.DataFrame
+        Loaded dataframe of features.
+    """
     return pd.read_csv(path)
 
-def add_fake_risk_score(df):
+def add_fake_risk_score(df: pd.DataFrame) -> pd.DataFrame:
+    """Add a synthetic risk score target for training/demo purposes.
+
+    Parameters
+    ----------
+    df: pd.DataFrame
+        Input dataframe containing economic features.
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe with an added `risk_score` column.
+    """
     # You’ll replace this later with a real scoring model or human labels
     np.random.seed(42)
     df["risk_score"] = (
@@ -24,7 +60,19 @@ def add_fake_risk_score(df):
     )
     return df
 
-def train_and_save_model(df):
+def train_and_save_model(df: pd.DataFrame) -> Dict[str, str]:
+    """Train model, save artifacts, and generate SHAP explanations.
+
+    Parameters
+    ----------
+    df: pd.DataFrame
+        Dataframe containing features and target (risk_score).
+
+    Returns
+    -------
+    Dict[str, str]
+        Mapping of generated SHAP artifact names to their file paths.
+    """
     features = ["sentiment_score", "gdp", "unemployment", "cpi"]
     target = "risk_score"
 
@@ -41,14 +89,14 @@ def train_and_save_model(df):
     
     df.loc[:, "predicted_risk"] = model.predict(X)
     df.to_csv("data/processed/predicted_risks.csv", index=False)
-    print("Saved: predicted_risks.csv")
+    logger.info("Saved: predicted_risks.csv")
 
 
     mae = mean_absolute_error(y_test, preds)
     r2 = r2_score(y_test, preds)
 
-    print(f"MAE: {mae:.4f}")
-    print(f"R2 Score: {r2:.4f}")
+    logger.info("MAE: %.4f", mae)
+    logger.info("R2 Score: %.4f", r2)
 
     os.makedirs("models", exist_ok=True)
     os.makedirs("examples", exist_ok=True)
@@ -62,6 +110,28 @@ def train_and_save_model(df):
     }).reset_index(drop=True)
 
     df_preds.head(5).to_json("examples/sample_predictions.json", orient="records", indent=2)
+
+    # SHAP explainability artifacts
+    artifacts: Dict[str, str] = {}
+    try:
+        # For SHAP, use a manageable subset to avoid heavy computation
+        X_for_shap = X_test.copy()
+        if len(X_for_shap) > 1000:
+            X_for_shap = X_for_shap.sample(n=1000, random_state=42)
+
+        artifacts = compute_and_save_shap_artifacts(
+            model=model,
+            X=X_for_shap,
+            feature_names=list(X.columns),
+            reports_dir="reports",
+            figures_dir="reports/figures",
+            max_display=10,
+        )
+        logger.info("Generated SHAP artifacts: %s", artifacts)
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("SHAP explainability failed: %s", exc)
+
+    return artifacts
 
 if __name__ == "__main__":
     df = load_data()
