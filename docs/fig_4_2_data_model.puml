@@ -1,0 +1,52 @@
+@startuml
+' Render with: plantuml -tsvg docs/fig_4_2_data_model.puml
+
+title Data Model: RiskIntel Entities
+
+class CountryDay {
+  country: string
+  date: date
+}
+
+class EconomicIndicator {
+  name: string
+  value: float
+  unit: string
+}
+
+class SentimentObservation {
+  mean: float
+  zscore: float
+  n_articles: int
+}
+
+class FeatureVector {
+  features: map<string, float>
+}
+
+class RiskScore {
+  score: float
+}
+
+class AlertEvent {
+  type: enum
+  timestamp: datetime
+  details: string
+}
+
+class AuditRecord {
+  timestamp: datetime
+  event: string
+  country: string
+  date: date
+  shap_snapshot: path
+}
+
+CountryDay "1" -- "*" EconomicIndicator : has
+CountryDay "1" -- "1" SentimentObservation : aggregates
+CountryDay "1" -- "1" FeatureVector : derived
+FeatureVector "1" -- "1" RiskScore : predicts
+RiskScore "1" -- "*" AlertEvent : triggers
+AlertEvent "*" -- "*" AuditRecord : written as
+
+@enduml
