@@ -1,0 +1,25 @@
+@startuml
+' Render with: plantuml -tsvg docs/fig_4_4_sequence_sentiment_shock.puml
+
+title Sequence: Sentiment Shock Flow
+
+participant Scheduler
+participant Ingestion
+database "FeatureStore" as FS
+participant Model
+participant SHAP
+participant Alert
+participant Audit
+participant Dashboard
+
+Scheduler -> Ingestion: start()
+Ingestion -> FS: upsert(macro, sentiment)
+Model -> FS: read(features)
+Model -> Model: predict()
+Model -> SHAP: explain(prediction)
+SHAP -> Alert: drivers, shock=z-score spike
+Alert -> Audit: record(event=ALERT_SENTIMENT_SHOCK)
+Alert -> Dashboard: notify(alert)
+Audit -> Dashboard: provide(history)
+
+@enduml

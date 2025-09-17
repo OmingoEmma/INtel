@@ -1,0 +1,31 @@
+@startuml
+' Render with: plantuml -tsvg docs/fig_4_3_activity_guardrails.puml
+
+title Activity: Daily Scoring with Guardrails
+
+start
+:Scheduler triggers job;
+:Fetch macro & sentiment from APIs;
+:Preprocess & join features;
+:Predict risk with model;
+:Compute SHAP explanations;
+
+if (G-01 Freshness \n last_ingest_hours > 24?) then (Yes)
+  :Raise DATA_STALE alert;
+  :Log to Audit;
+else (No)
+  :Proceed;
+endif
+
+if (G-02 Sparse news \n sentiment_n < 15?) then (Yes)
+  :Flag low-confidence prediction;
+  :Raise ALERT_SENTIMENT_SHOCK (if z-score spike);
+  :Log to Audit;
+else (No)
+  :Proceed;
+endif
+
+:Publish results to Dashboard;
+stop
+
+@enduml

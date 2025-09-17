@@ -1,0 +1,40 @@
+@startuml
+' Render with: plantuml -tsvg docs/fig_4_1_architecture.puml
+
+title RiskIntel Architecture Overview
+
+skinparam componentStyle rectangle
+skinparam legendBackgroundColor #F9F9F9
+
+actor Scheduler
+node "External APIs" as APIs
+component Ingestion
+database "Feature Store" as FS
+component "Risk Model" as Model
+component "SHAP Explainer" as SHAP
+component "Alerting Service" as Alert
+folder Audit
+component "User Dashboard" as UI
+
+Scheduler --> Ingestion : cron
+APIs --> Ingestion : fetch macro & sentiment
+Ingestion --> FS : write features
+FS --> Model : read features
+Model --> FS : write risk scores
+Model --> SHAP : predict
+SHAP --> Alert : top drivers
+Alert --> Audit : log decisions
+Alert --> UI : notifications
+FS --> UI : features & scores
+Audit --> UI : decision history
+
+legend right
+Stereotypes:
+- Ingestion: ETL jobs
+- Feature Store: time-series table store
+- Risk Model: RandomForestRegressor
+- SHAP Explainer: TreeExplainer
+- Alerting: rules G-01 freshness, G-02 sparse-news
+endlegend
+
+@enduml
